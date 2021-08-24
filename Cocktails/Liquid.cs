@@ -26,6 +26,10 @@ namespace Cocktails
     }
     class Liquid : Ingredient
     {
+        public Liquid()
+        {
+        }
+
         public Liquid(LiquidType liquidType, float ammount)
         {
             Name = liquidType.ToString();

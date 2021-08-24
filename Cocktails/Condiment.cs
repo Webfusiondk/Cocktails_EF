@@ -20,6 +20,10 @@ namespace Cocktails
     }
     class Condiment : Ingredient
     {
+        public Condiment()
+        {
+        }
+
         public Condiment(CondimentType condimentType)
         {
             Name = condimentType.ToString();

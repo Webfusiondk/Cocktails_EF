@@ -11,11 +11,17 @@ namespace Cocktails
     {
         public List<Ingredient> Ingredients { get; set; }
         [Key]
+        public int Id { get; set; }
         public string DrinkName { get; set; }
         public Cocktail(List<Ingredient> ingredients, string drinkName)
         {
             Ingredients = ingredients;
             DrinkName = drinkName;
+        }
+
+        public Cocktail()
+        {
+
         }
     }
 }
