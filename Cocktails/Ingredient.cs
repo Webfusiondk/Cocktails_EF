@@ -9,5 +9,6 @@ namespace Cocktails
     {
         [Key]
         public string Name { get; set; }
+
     }
 }
