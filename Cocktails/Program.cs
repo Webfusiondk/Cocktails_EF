@@ -9,9 +9,9 @@ namespace Cocktails
         static CocktailManager manager = new CocktailManager();
         static void Main(string[] args)
         {
-            manager.RemoveCocktail("");
-            AskForDrink();
-            PrintAllDrinks();
+            manager.UpdateCocktail("VodkaWater",ChoseIngredients());
+            //AskForDrink();
+            //PrintAllDrinks();
             ChoseIngredients();
             Console.WriteLine("Done");
             Console.ReadKey();
@@ -47,7 +47,7 @@ namespace Cocktails
                 Console.WriteLine(temp[i].DrinkName + " " + tempString);
             }
         }
-        private static void ChoseIngredients()
+        private static Cocktail ChoseIngredients()
         {
             bool isNotDone = true;
             ingredients = new List<Ingredient>();
@@ -80,14 +80,14 @@ namespace Cocktails
                         Console.Clear();
                         isNotDone = false;
                         Console.WriteLine("Name your drink." + "\n" + AllIngredients(ingredients));
-                        manager.AddCocktail(new Cocktail(ingredients, Console.ReadLine()));
+                        return new Cocktail(ingredients, Console.ReadLine());
 
-                        break;
                     default:
                         Console.WriteLine("Wrong input");
                         break;
                 }
             }
+            return null;
         }
         private static string AllIngredients(List<Ingredient> ingredients)
         {

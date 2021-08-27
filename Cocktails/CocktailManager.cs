@@ -32,27 +32,49 @@ namespace Cocktails
             return cocktails;
         }
 
-        public string UpdateCocktail(Cocktail cocktail)
+        public string UpdateCocktail(string name,Cocktail cocktail)
         {
-            return null;
+            using (var ctx = new CocktailContext())
+            {
+                Cocktail drink = GetDrinkByName(name);
+                if (drink != null)
+                {
+                    foreach (var ingredient in drink.Ingredients)
+                    {
+                        drink.Ingredients.Remove(ingredient);
+                    }
+                    foreach (var ingredient in cocktail.Ingredients)
+                    {
+                        drink.Ingredients.Add(ingredient);
+                    }
+                    drink.DrinkName = cocktail.DrinkName;
+                    ctx.DTCocktail.Add(drink);
+                    ctx.SaveChanges();
+                    return "The drink is updated";
+                }
+            }
+            return "No drink by that name.";
         }
 
         public string RemoveCocktail(string cocktail)
         {
             using (var ctx = new CocktailContext())
             {
-                List<Ingredient> itemsToRemove = new List<Ingredient>();
-                var drink = ctx.DTCocktail.Single(o => o.DrinkName == cocktail);
-                var ingredients = from ing in ctx.DTIngredient where drink.Id == ing.Id select ing;
-                foreach (var item in ingredients)
+                var drink = ctx.DTCocktail.Where(l => l.DrinkName == cocktail).FirstOrDefault();
+                var ingredients = ctx.DTIngredient.Where(o => cocktail == drink.DrinkName).ToList();
+                if (ingredients != null)
                 {
-                    itemsToRemove.Add(item);
+                    foreach (var ingredient in ingredients)
+                    {
+                        ctx.DTIngredient.Remove(ingredient);
+                    }
+                    ctx.DTCocktail.Remove(drink);
+                    ctx.SaveChanges();
+                    return "Drink removed from menu card";
                 }
-                ctx.DTIngredient.RemoveRange(itemsToRemove);
-                ctx.DTCocktail.Remove(drink);
-                ctx.SaveChanges();
+
             }
-            return null;
+            return "No drink by that name";
         }
 
         public string AddCocktail(Cocktail cocktail)
@@ -68,13 +90,23 @@ namespace Cocktails
 
         public Cocktail AskForCocktail(string cocktail)
         {
+            Cocktail drink = GetDrinkByName(cocktail);
+            if (drink != null)
+            {
+                return drink;
+            }
+            return null;
+        }
+
+        public Cocktail GetDrinkByName(string name)
+        {
             //Gets a drink by a string we send in.
             List<Ingredient> ingredients = new List<Ingredient>();
             string temp = "";
             using (var ctx = new CocktailContext())
             {
                 var drink = from item in ctx.DTCocktail
-                            where item.DrinkName.ToLower() == cocktail.ToLower()
+                            where item.DrinkName.ToLower() == name.ToLower()
                             join ingredient in ctx.DTIngredient on item.Id equals ingredient.Id
                             select new { item.DrinkName, item.Ingredients };
                 foreach (var item in drink)
