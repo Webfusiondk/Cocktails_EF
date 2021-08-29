@@ -12,7 +12,7 @@ namespace Cocktails
             manager.UpdateCocktail("VodkaWater",ChoseIngredients());
             //AskForDrink();
             //PrintAllDrinks();
-            ChoseIngredients();
+            //manager.AddCocktail(ChoseIngredients());
             Console.WriteLine("Done");
             Console.ReadKey();
         }

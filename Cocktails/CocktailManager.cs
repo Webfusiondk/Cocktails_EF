@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Text;
 using System.Linq;
 
@@ -32,28 +33,32 @@ namespace Cocktails
             return cocktails;
         }
 
-        public string UpdateCocktail(string name,Cocktail cocktail)
+        public string UpdateCocktail(string name, Cocktail cocktail)
         {
+
             using (var ctx = new CocktailContext())
             {
-                Cocktail drink = GetDrinkByName(name);
-                if (drink != null)
+                var drink = ctx.DTCocktail.Include("Ingredients").Where(c => c.DrinkName == name);
+
+                foreach (var item in drink)
                 {
-                    foreach (var ingredient in drink.Ingredients)
+                    if (item != null)
                     {
-                        drink.Ingredients.Remove(ingredient);
+                        for (int i = item.Ingredients.Count - 1; i > -1; i--)
+                        {
+                            item.Ingredients.RemoveAt(i);
+                        }
+                        foreach (var ingredient in cocktail.Ingredients)
+                        {
+                            item.Ingredients.Add(ingredient);
+                        }
+                        item.DrinkName = cocktail.DrinkName;
                     }
-                    foreach (var ingredient in cocktail.Ingredients)
-                    {
-                        drink.Ingredients.Add(ingredient);
-                    }
-                    drink.DrinkName = cocktail.DrinkName;
-                    ctx.DTCocktail.Add(drink);
-                    ctx.SaveChanges();
-                    return "The drink is updated";
+
                 }
+                ctx.SaveChanges();
+                return "No drink by that name";
             }
-            return "No drink by that name.";
         }
 
         public string RemoveCocktail(string cocktail)
@@ -107,7 +112,6 @@ namespace Cocktails
             {
                 var drink = from item in ctx.DTCocktail
                             where item.DrinkName.ToLower() == name.ToLower()
-                            join ingredient in ctx.DTIngredient on item.Id equals ingredient.Id
                             select new { item.DrinkName, item.Ingredients };
                 foreach (var item in drink)
                 {
@@ -122,3 +126,4 @@ namespace Cocktails
         }
     }
 }
+

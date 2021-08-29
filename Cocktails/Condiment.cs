@@ -29,7 +29,7 @@ namespace Cocktails
             Name = condimentType.ToString();
             CondimentType = condimentType;
         }
-
+        public virtual Cocktail Cocktail { get; set; }
         public CondimentType CondimentType { get; set; }
     }
 }
